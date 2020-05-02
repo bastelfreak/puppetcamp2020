@@ -477,6 +477,7 @@ count: false
 * somehow we need to sync those files into every git repository
 
 ---
+
 ## Vox Pupuli
 
 .left-column[
@@ -492,11 +493,11 @@ count: false
 
 * We are managing more than 141 modules
 
-* 113 in July 2019
+  * 113 in July 2019
 
-* modulesync was developed by Puppet Inc, moved to Vox Pupuli
+* [modulesync](https://github.com/voxpupuli/modulesync#modulesync) was developed by Puppet Inc, moved to Vox Pupuli
 
-* It takes a config file + templates, throws it into every modules git repo
+* It takes a [config file](https://github.com/voxpupuli/modulesync_config/blob/master/config_defaults.yml) + [templates](https://github.com/voxpupuli/modulesync_config/tree/master/moduleroot), throws it into every modules git repo
 
 * Everybody can start it
 
@@ -511,14 +512,151 @@ count: false
 .left-column[
 
 ## How?
+### Standards
+### Documentation
 ### modulesync
-### travis
 
 ]
 
 .right-column[
 
-![Right-aligned image](travis.png)
+* The generic tool: [github.com/voxpupuli/modulesync](https://github.com/voxpupuli/modulesync#modulesync)
+
+* The Vox Pupuli specific configuration: [github.com/voxpupuli/modulesync_config](https://github.com/voxpupuli/modulesync_config#modulesync-configs)
+
+* Because of the separation, every organisation can use it
+
+  * With Vox Pupuli configs
+
+  * Or with own configs
+]
+
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+## Vox Pupuli
+
+.left-column[
+
+## How?
+### Standards
+### Documentation
+### modulesync
+
+]
+
+.right-column[
+
+![modulesync_config docroot](msyncconfig.png)
+
+]
+
+???
+
+* managed_modules: list of git repos to manage
+* config_defaults:yml: settings for templates
+* .travis.yml: Each change here is run as noop
+* moduleroot: contains templates for all puppet modules
+---
+
+## Vox Pupuli
+
+.left-column[
+
+## How?
+### Standards
+### Documentation
+### modulesync
+
+]
+
+.right-column[
+
+![modulesync_config docroot](msyncconfigmoduleroot.png)
+
+]
+
+???
+
+---
+
+## Vox Pupuli
+
+.left-column[
+
+## How?
+### Standards
+### Documentation
+### modulesync
+
+]
+
+.right-column[
+
+* Setup
+```bash
+# checkout latest modulesync_config release
+git checkout $(git tag --list | sort -V | tail -n1)
+message="modulesync $(git describe)"
+```
+
+* Sync all modules and create Pull Requests with a label
+```bash
+bundle exec msync update --message "{$message}" \
+--pr --pr-labels modulesync --pr-title "${message}"
+```
+
+* Apply template to one module, don't commit
+```bash
+bundle exec msync update --filter "${module_name}" --noop
+```
+]
+
+.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+## Vox Pupuli
+
+.left-column[
+
+## How?
+### Standards
+### Documentation
+### modulesync
+
+]
+
+.right-column[
+
+![modulesync PR](modulesync.png)
+
+]
+
+???
+
+* example screenshot from such a PR
+* we could automerge them, currently disabled
+---
+
+## Vox Pupuli
+
+.left-column[
+
+## How?
+### Standards
+### Documentation
+### modulesync
+### Travis-CI
+
+]
+
+.right-column[
 
 * Free platform
 
@@ -527,6 +665,8 @@ count: false
 * release modules to the forge
 
 * 10-60min per module
+
+* Soon we will move some workload git GitHub Actions to speed things up
 
 ]
 
@@ -539,9 +679,11 @@ count: false
 .left-column[
 
 ## How?
+### Standards
+### Documentation
 ### modulesync
-### travis
-### beaker
+### Travis-CI
+### Beaker
 
 ]
 
@@ -566,34 +708,50 @@ count: false
 .left-column[
 
 ## How?
+### Standards
+### Documentation
 ### modulesync
-### travis
-### beaker
+### Travis-CI
+### Beaker
 
 ]
 
 .right-column[
 
-Can be executed:
-
-* on your notebook before you contribute a patch (same for rspec)
-
-* with docker on travis
+![travis CI matrix](travis.png)
 
 ]
 
-.footnote[[@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+???
+
+* CI matrix for our grafana puppet module
+* 18 different jobs for linter, unit, acceptance tests
+* acceptance tests on:
+
+    - set: debian8-64
+    - set: debian9-64
+    - set: debian10-64
+    - set: ubuntu1604-64
+    - set: ubuntu1804-64
+    - set: centos6-64
+    - set: centos7-64
+
+* Exessive tests make people more confident to do changes
 
 ---
+
+exclude: true
 
 ## Vox Pupuli
 
 .left-column[
 
 ## How?
+### Standards
+### Documentation
 ### modulesync
-### travis
-### beaker
+### Travis-CI
+### Beaker
 ### Tooling
 ]
 
