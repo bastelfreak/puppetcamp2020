@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>modulesync - How Vox Pupuli Manages 133 modules</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+      @font-face {
+        font-family: "Yanone Kaffeesatz";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Yanone Kaffeesatz Regular"),
+          local("YanoneKaffeesatz-Regular"),
+          url(YDAoLskQQ5MOAgvHUQCcLbvy90DtE_Pg_qiF9bHvTzw.ttf)
+            format("truetype");
+      }
+      @font-face {
+        font-family: "Ubuntu Mono";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Ubuntu Mono Regular"), local("UbuntuMono-Regular"),
+          url(ViZhet7Ak-LRXZMXzuAfkZ0EAVxt0G0biEntp43Qt6E.ttf)
+            format("truetype");
+      }
+      @font-face {
+        font-family: "Droid Serif";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Droid Serif Regular"), local("DroidSerif-Regular"),
+          url(0AKsP294HTD-nvJgucYTaJ0EAVxt0G0biEntp43Qt6E.ttf)
+            format("truetype");
+      }
+      body {
+        font-family: "Droid Serif";
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Yanone Kaffeesatz";
+        font-weight: 400;
+        margin-bottom: 0;
+      }
+      .remark-slide-content {
+        background-image: url(blue-skies.jpg);
+        background-size: cover;
+      }
+      .remark-slide-content h1 {
+        font-size: 3em;
+      }
+      .remark-slide-content h2 {
+        font-size: 2em;
+      }
+      .remark-slide-content h3 {
+        font-size: 1.6em;
+      }
+      .footnote {
+        position: absolute;
+        bottom: 3em;
+      }
+      li p {
+        line-height: 1.25em;
+      }
+      .red {
+        color: #fa0000;
+      }
+      .large {
+        font-size: 2em;
+      }
+      a,
+      a > code {
+        color: rgb(249, 38, 114);
+        text-decoration: none;
+      }
+      code {
+        -moz-border-radius: 5px;
+        -web-border-radius: 5px;
+        background: #e7e8e2;
+        border-radius: 5px;
+      }
+      .remark-code,
+      .remark-inline-code {
+        font-family: "Ubuntu Mono";
+      }
+      .remark-code-line-highlighted {
+        background-color: #373832;
+      }
+      .pull-left {
+        float: left;
+        width: 47%;
+      }
+      .pull-right {
+        float: right;
+        width: 47%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+      #slideshow .slide .content code {
+        font-size: 0.8em;
+      }
+      #slideshow .slide .content pre code {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .inverse {
+        background: #272822;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverse h1,
+      .inverse h2 {
+        color: #f3f3f3;
+        line-height: 0.8em;
+      }
+      /* Slide-specific styling */
+      #slide-inverse .footnote {
+        bottom: 12px;
+        left: 20px;
+      }
+      #slide-how .slides {
+        font-size: 0.9em;
+        position: absolute;
+        top: 151px;
+        right: 140px;
+      }
+      #slide-how .slides h3 {
+        margin-top: 0.2em;
+      }
+      #slide-how .slides .first,
+      #slide-how .slides .second {
+        padding: 1px 20px;
+        height: 90px;
+        width: 120px;
+        -moz-box-shadow: 0 0 10px #777;
+        -webkit-box-shadow: 0 0 10px #777;
+        box-shadow: 0 0 10px #777;
+      }
+      #slide-how .slides .first {
+        background: #fff;
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        z-index: 1;
+      }
+      #slide-how .slides .second {
+        position: relative;
+        background: #fff;
+        z-index: 0;
+      }
+      /* Two-column layout */
+      .puppetlogo img {
+        width: 95%;
+      }
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+      .left-column h2:last-of-type,
+      .left-column h3:last-child {
+        color: #000;
+      }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
+      }
+      .right-column .something img {
+        width: 100%;
+        height: 550px;
+      }
+      .right-column .smallimg img {
+        width: 90%;
+      }
+      .right-column .nowidth img {
+        width: auto;
+      }
+      .right-column-center {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
+        text-align: center;
+      }
+      .right-column img {
+        width: 100%;
+      }
+      @page {
+        size: 1024px 786px;
+        margin: 0;
+      }
+      @media print {
+        .remark-slide-scaler {
+          width: 100% !important;
+          height: 100% !important;
+          transform: scale(1) !important;
+          top: 0 !important;
+          left: 0 !important;
+          size: 1920px 1080px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle, inverse
+
+# Automating the Vox Pupuli Yak Shaving
+
+## Automate all the yak shaving!
+
+???
+
+
+---
+
+## $ whoami
+<img src="bastelfreak2.jpg" alt="drawing" style="float: right;width: 400px;"/>
+
+* Tim 'bastelfreak' Meusel
+
+* Puppet Contributor since 2012
+
+* Merging stuff on [Vox Pupuli](https://voxpupuli.org/)  (Puppet Community) since 2015
+
+* Vox Pupuli Project Management Committee member
+
+???
+
+*
+
+---
+
+## $ whoami
+<img src="robert.jpg" alt="drawing" style="float: right;width: 400px;"/>
+
+* Robert 'flipez' Müller
+
+* Ruby Developer since 2013
+
+* Builds clouds at Hetzner
+
+* Also builds Rails apps and tunes foosball tables
+
+
+???
+
+*
+
+---
+
+class: center, middle, inverse
+
+# What's this Vox Pupuli thingy?
+
+???
+
+* lets have a look on the daily tasks a maintainer can do to keep modules in shape
+
+---
+
+.left-column[
+## Vox Pupuli
+]
+
+.right-column[
+* Amount of Vox Pupuli members with merge permissions
+
+![img](contributors.svg)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* based on github org
+* who of you is part of that group?
+* who uses vox pupuli modules?
+* who doesn't know what vox is?
+---
+class: center, middle, inverse
+
+# The path of a Open Source Maintainer...
+
+## What do we do?
+
+???
+
+* lets have a look on the daily tasks a maintainer can do to keep modules in shape
+
+---
+
+background-image: url(yakshaving.jpg)
+background-size: cover
+
+???
+
+* lets start with yak shaving
+---
+
+.left-column[
+## Yak shaving
+### Dependencies
+]
+
+.right-column[
+
+![imagefoo](stdlib7.png)
+
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+Puppetlabs releases a new major version of stdlib
+---
+
+.left-column[
+## Yak shaving
+### Dependencies
+]
+
+.right-column[
+
+![imagefoo](deps.png)
+
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* This leads to an interesting challenge
+* All puppet modules have an upper version boundary
+* At least in acceptance tests those boundaries are enforced, we need to update it
+* vox pupuli has 105 modules that depend on stdlib
+---
+
+.left-column[
+## Yak shaving
+### Dependencies
+]
+
+.right-column[
+
+![imagefoo](puppet.png)
+
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* of course the same applies for the puppet version
+* Dear puppet: a headsup info for a new release would be dope
+
+---
+
+.left-column[
+## Yak shaving
+### Dependencies
+]
+
+.right-column[
+
+![imagefoo](rhel.png)
+
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* and it applies for all the operating systems
+
+---
+
+.left-column[
+## Yak shaving
+### Dependencies
+### Labels
+]
+
+.right-column[
+![imagefoo](labels.png)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* We've a basic set of labels that are identical across all modules
+* sometimes we add / remove labels
+* sometimes we get repositories migrated to us
+
+---
+
+.left-column[
+## Yak shaving
+### Dependencies
+### Labels
+### Modulesync
+]
+
+.right-column[
+* Many files are identical across our modules
+
+  * CONTRIBUTING.md, rspec configuration
+
+* Many files are very similar
+
+  * .travis.yml, Gemfile, Rakefile
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## Yak shaving
+### Dependencies
+### Labels
+### Modulesync
+]
+
+.right-column[
+
+* modulesync was initially developed by Puppet Inc.
+
+* Now maintained by Vox Pupuli
+
+* a template directory + configuration file for every module
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## Yak shaving
+### Dependencies
+### Labels
+### Modulesync
+### Releases
+]
+
+.right-column[
+![img](releases.png)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* We've currently 124 modules on the forge
+* we need to release modules on a regular basis
+
+---
+class: center, middle, inverse
+
+# The path of a Open Source Maintainer...
+
+## What do we actually do?
+
+
+???
+
+---
+
+.left-column[
+## Reviews
+]
+
+.right-column[
+
+* We have many pull requests
+
+![img](prs.png)
+
+* [All open PRs](https://github.com/pulls?q=is%3Aopen+is%3Apr+user%3Avoxpupuli+archived%3Afalse+sort%3Acreated-desc)
+
+* [All open PRs with green CI](https://github.com/pulls?utf8=%E2%9C%93&q=is%3Aopen+is%3Apr+user%3Avoxpupuli+archived%3Afalse+sort%3Acreated-desc+status%3Asuccess)
+
+* [All open PRs with green CI and no merge conflicts](https://github.com/pulls?utf8=%E2%9C%93&q=is%3Aopen+is%3Apr+user%3Avoxpupuli+archived%3Afalse+status%3Asuccess+sort%3Aupdated-desc+-label%3Amerge-conflicts)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* `with no merge conflicts` is handled by our labels
+* github search doesn't allow
+---
+
+.left-column[
+## Reviews
+### More labels
+]
+
+.right-column[
+![img](labels2.png)
+![img](labels3.png)
+![img](labels4.png)
+
+* New feature? `enhancement` label
+* Bug / Bugfix? `bug` label
+* Breaking change? `backwards-incompatible` label
+* Additional work required? `needs-work` label
+
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## Reviews
+### More labels
+]
+
+.right-column[
+Filtering:
+
+* labels like `needs-feedback`, `needs-work`, `tests-fail`, `needs-docs`, `beginner-friendly`, `needs-rebase` help us to sort pull requests and issues by grouping them
+
+Changelog:
+
+* labels like `bug`, `enhancement`, `backwards-incompatible` help us to generate a CHANGELOG.md
+
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* show the CHANGELOG.md
+* or https://github.com/voxpupuli/puppet-zabbix/blob/master/CHANGELOG.md
+---
+
+.left-column[
+## Reviews
+### More labels
+### Email Addresses
+]
+
+.right-column[
+* Ensure that an author has their email address in Git and github.com in sync
+
+  * Otherwise GitHub fails to account the contribution properly
+
+![img](email.png)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## Reviews
+### More labels
+### Email Addresses
+### Templates
+]
+
+.right-column[
+* Ensure that new templates are always [epp](https://puppet.com/docs/puppet/latest/lang_template_epp.html), not [erb](https://puppet.com/docs/puppet/latest/lang_template_erb.html)
+
+  * Epp templates have proper scopes and datatypes
+
+![img](epp.png)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+class: center, middle, inverse
+
+# Let us solve all our problems!
+
+???
+
+---
+
+
+.left-column[
+## VPT
+]
+
+.right-column[
+.smallimg[
+![imagefoo](automate.jpg)
+]
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* explain VPT means Vox Pupuli Tasks
+---
+
+.left-column[
+## VPT
+### Automate daily tasks
+]
+
+.right-column[
+<img src="getallthediffs.png" alt="drawing" style="float: right;width: 130px; margin-right: 50px"/>
+
+### "There is this script. Do you think we can improve it?"
+
+* Checks supported OS ranges
+* Checks supported Puppet range
+
+* Sort repos into categories based on
+  * managed modules files
+  * voxpupuli/plumbing repo
+  * forge releases
+  * information in files in every repository
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+---
+
+count: false
+
+.left-column[
+## VPT
+### Automate daily tasks
+]
+
+.right-column[
+<img src="getallthediffs.png" alt="drawing" style="float: right;width: 130px; margin-right: 50px"/>
+
+### "There is this script. Do you think we can improve it?"
+
+* Checks supported OS ranges
+* Checks supported Puppet range
+
+* Sort repos into categories based on
+  * managed modules files
+  * voxpupuli/plumbing repo
+  * forge releases
+  * information in files in every repository
+
+## Uhm, I guess
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+---
+
+.left-column[
+## VPT
+### Automate daily tasks
+]
+
+.right-column[
+![img](vpt_dashboard.png)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## VPT
+### Automate daily tasks
+]
+
+.right-column[
+## The to-do list
+![img](vpt_sort_1.png)
+
+* Refreshed every 6 hours
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## VPT
+### Automate daily tasks
+]
+
+.right-column[
+## The to-do list
+![img](vpt_sort_2.png)
+
+* Refreshed every 6 hours
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## VPT
+### Automate daily tasks
+]
+
+.right-column[
+## The repository view
+![img](vpt_repo.png)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+class: center, middle, inverse
+
+# What else did we do?
+
+???
+
+---
+
+class: center, middle, inverse
+<img src="csaswh.jpeg" alt="drawing" style="float: center;width: 400px"/>
+
+???
+---
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+]
+
+.right-column[
+![img](VPT-overview.jpg)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+---
+
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+]
+
+.right-column[
+
+```ruby
+case type
+    when 'pull_request'
+      # Ignore events which are triggered by the bot
+      return if payload.dig('sender', 'id').to_i == 53_702_691
+
+      if Repository.notably? payload['repository']['name']
+        @processor = GithubEvent::PullRequest.new(payload)
+      end
+    when *known_but_ignoreable_events
+      true
+    else
+      Raven.capture_message("Unknown Hook Received: #{type}", extra: payload)
+    end
+```
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+]
+
+.right-column[
+
+```ruby
+def validate(saved_changes)
+  # Don't run through the validaten, if only the eligable_for_comment attribute got updated
+  return if saved_changes.keys.sort == %w[eligable_for_comment].sort && !mergeable.nil?
+
+  # if the pull request is now closed, dont attach/remove labels/comments
+  return if closed?
+
+  label = Label.needs_rebase
+  if mergeable == true
+    ensure_label_is_detached(label)
+  elsif mergeable == false
+    repository.ensure_label_exists(label)
+
+    ##
+    # We only add a comment if we addded a label. If the label already is present
+    # we also already added the comment. So no need for a new one.
+    add_comment(I18n.t('c.needs_rebase', author: author)) if ensure_label_is_attached(label)
+  elsif mergeable.nil?
+    UpdateMergeableWorker.perform_in(1.minute.from_now,
+                                     repository.name,
+                                     number,
+                                     id,
+                                     saved_changes)
+  end
+end
+```
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+]
+
+.right-column[
+<img src="pr_label_1.png" alt="drawing" style="width: 650px"/>
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+]
+
+.right-column[
+<img src="pr_label_2.png" alt="drawing" style="width: 700px"/>
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+]
+
+.right-column[
+![img](pr_label_3.png)
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+]
+
+.right-column[
+<img src="pr_label_4.png" alt="drawing" style="width: 450px"/>
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+]
+
+.right-column[
+<img src="sidekiq.png" alt="drawing" style="width: 800px"/>
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+class: center, middle, inverse
+
+# What else can we do?
+
+## What do you want us to do? What are your usecases?
+
+???
+
+---
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+### Lookout
+]
+
+.right-column[
+* Automate more labeling on issues and pull requests
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* All examples we showed earlier could be automated
+
+
+---
+
+count: false
+
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+### Lookout
+]
+
+.right-column[
+* Automate more labeling on issues and pull requests
+
+* Implement GitLab API support
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* We want that other communities and organisations use this as well
+* many of them use GitLab
+
+---
+
+count: false
+
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+### Lookout
+]
+
+.right-column[
+* Automate more labeling on issues and pull requests
+
+* Implement GitLab API support
+
+* Help companies that want to host this on premise for internal repositories
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+---
+
+.left-column[
+## VPT
+### Automate daily tasks
+### Architecture
+### Lookout
+### Conclusion
+]
+
+.right-column[
+* Vox Pupuli is awesome, please contribute!
+
+* We've great tooling to scale module handling
+
+* GitHub/GitLab API enables us to automate even more and to focus on code reviewing
+
+* Let us know which parts in the communities you would like to see automated
+
+* Checkout the current dashboard at [voxpupu.li](https://voxpupu.li) or our docs at [github.com/voxpupuli/vox-pupuli-tasks](https://github.com/voxpupuli/vox-pupuli-tasks#vox-pupuli-tasks---the-webapp-for-community-management)
+
+### Thanks for your attention!
+]
+
+.footnote[[@Was1NicerDude](https://twitter.com/Was1NicerDude) & [@bastelsblog](https://twitter.com/bastelsblog) for [@voxpupuliorg](https://twitter.com/voxpupuliorg)]
+
+???
+
+* We've some open issues with collected ideas. We need feedback!
+
+    </textarea>
+    <script src="remark-latest.min.js"></script>
+    <script>
+      var slideshow = remark.create({
+        // Set the slideshow display ratio
+        // Default: '4:3'
+        // Alternatives: '16:9', ...
+        ratio: "16:9",
+        highlightStyle: "github"
+      });
+    </script>
+  </body>
+</html>
