@@ -1,7 +1,7 @@
-# Managing 130 Puppet modules at scale!
+# Managing 140 Puppet modules at scale!
 
 * A talk by [Tim 'bastelfreak' Meusel](https://twitter.com/BastelsBlog) for the [Virtual Puppet Camp 2020](https://puppet.com/events/puppet-camps/)
-* You can find more talks from bastelfreak in his repository
+* You can find more talks from bastelfreak in [his repository](https://github.com/bastelfreak/talks#collection-of-talks-proposals-and-related-stuff)
 * For consulting requests please write to [tim@bastelfreak.de](mailto:tim@bastelfreak.de)
 
 ## License
