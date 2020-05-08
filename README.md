@@ -8,3 +8,10 @@
 
 This talk is licensed with [Attribution-NonCommercial-ShareAlike 4.0 International](https://github.com/bastelfreak/puppetcamp2020/blob/master/LICENSE2).
 All code examples are licensed [GNU Affero General Public License v3.0](https://github.com/bastelfreak/puppetcamp2020/blob/master/LICENSE)
+
+## Links
+
+* Slides repository [github.com/bastelfreak/puppetcamp2020](https://github.com/bastelfreak/puppetcamp2020)
+* Online slides [bastelfreak.de/puppetcamp2020](https://bastelfreak.de/puppetcamp2020/#1)
+* [pdf](modulesync_-_How_Vox_Pupuli_Manages_133_modules.pdf)
+* [Video recording](https://www.youtube.com/watch?v=Yp7LbOa8M80)
